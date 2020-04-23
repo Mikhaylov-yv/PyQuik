@@ -1,2 +1,1 @@
-# PyQuik
-Попытка переписать QuikSharp на python
+# Pyton класс для работы с прогораммой Quik
