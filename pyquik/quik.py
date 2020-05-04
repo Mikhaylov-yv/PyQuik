@@ -19,8 +19,8 @@ class Quik:
         # Используемые переменные
         self.clientCode = '' # '400K74Z'
         self.tradeAccount = '' # 'MB0002513352'
-        self.secClass = '' # 'CETS'
-        self.toolCode = ''  # 'USD000UTSTOM'
+        self.classCode = '' # 'CETS'
+        self.securityCode = ''  # 'USD000UTSTOM'
         self.firmid = '' # 'MB0002500000'
         self.id = 0
 
@@ -43,14 +43,13 @@ class Quik:
 
     # Создание инструмента
     def tool(self, toolCode):
-        self.toolCode = toolCode
+        self.securityCode = toolCode
         data = self.secClass_list + '|' + toolCode
-        self.secClass = self.getRequest(cmd='getSecurityClass', data=data)['data']
-        # Зачем нужен clientCode пока не понятно
+        self.classCode = self.getRequest(cmd='getSecurityClass', data=data)['data']
         self.clientCode = self.getRequest(cmd='getClientCode')['data']
-        self.toll = self.getRequest(cmd = 'getSecurityInfo', data = self.secClass + '|' + toolCode)['data']
-        self.tradeAccount = self.getRequest(cmd = 'getTradeAccount', data = self.secClass)['data']
-        self.toll_info = self.getRequest(cmd = 'getClassInfo',data = self.secClass)['data']
+        self.toll = self.getRequest(cmd = 'getSecurityInfo', data =self.classCode + '|' + toolCode)['data']
+        self.tradeAccount = self.getRequest(cmd = 'getTradeAccount', data = self.classCode)['data']
+        self.toll_info = self.getRequest(cmd = 'getClassInfo', data = self.classCode)['data']
         self.firmid = self.toll_info['firmid']
 
     # Определение secClass для создания инструмента
