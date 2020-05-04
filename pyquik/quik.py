@@ -5,8 +5,9 @@ import time
 from ast import literal_eval as le
 
 from orderbook import OrderBook
+from candle_functions import CandleFunctions
 
-class Quik:
+class Quik(OrderBook, CandleFunctions):
     port_requests = 34130
     port_callbacks = 34131
     host = "127.0.0.1"
@@ -70,7 +71,7 @@ class Quik:
             try:
                 response = le(response.decode('ANSI'))
             except:
-                print(response)
+                # print(response)
                 response = le(response.decode('ANSI').replace('true','"true"').replace('false','"false"'))
             print('Запрос: ' + str(request) + '\n' + 'Ответ: ' + str(response))
             return response
@@ -79,8 +80,8 @@ class Quik:
 if __name__ == '__main__':
     q = Quik()
     q.connekt()
-    q.tool('USD000UTSTOM')
-    q.get_orderBook()
+    q.tool('SBER')
+    q.getLastCandles(10,40)
 
 
 
