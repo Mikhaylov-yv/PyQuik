@@ -12,7 +12,7 @@ class Quik(OrderBook, CandleFunctions):
     port_callbacks = 34131
     host = "127.0.0.1"
     CRLF = "\r\n\r\n"
-    secClass_list = "SPBFUT,TQBR,TQBS,TQNL,TQLV,TQNE,TQOB,CETS"
+    secClass_list = "SPBFUT,TQBR,TQBS,TQNL,TQLV,TQNE,TQOB,CETS,QJSIM"
 
 
     def __init__(self):
@@ -67,7 +67,11 @@ class Quik(OrderBook, CandleFunctions):
         raw_data = json.dumps(request)
         self.sok_requests.sendall((raw_data + self.CRLF).encode())
         while (True):
-            response = self.sok_requests.recv(2048)
+            response = self.sok_requests.recv(16384)
+            # response = response.decode('ANSI')
+            # assert response.find('id'), f'Неудалось декодировать в str: {response} \n результат: {response}'
+            # response = le(response.replace('true', '"true"').replace('false', '"false"'))
+            # assert type(response) is dict, f'Не удается декодировать в dict  {response}, тип объекта  {type(response)}'
             try:
                 response = le(response.decode('ANSI'))
             except:
