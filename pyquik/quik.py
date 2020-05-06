@@ -66,26 +66,34 @@ class Quik(OrderBook, CandleFunctions):
         request = {"data": data, "id": self.id, "cmd": cmd, "t": t}
         raw_data = json.dumps(request)
         self.sok_requests.sendall((raw_data + self.CRLF).encode())
-        while (True):
-            response = self.sok_requests.recv(16384)
-            # response = response.decode('ANSI')
-            # assert response.find('id'), f'Неудалось декодировать в str: {response} \n результат: {response}'
-            # response = le(response.replace('true', '"true"').replace('false', '"false"'))
-            # assert type(response) is dict, f'Не удается декодировать в dict  {response}, тип объекта  {type(response)}'
+        response = b''
+        # Запускаем бесконечный цикл получения данных с принудительными выходами
+        while True:
             try:
-                response = le(response.decode('ANSI'))
-            except:
-                # print(response)
-                response = le(response.decode('ANSI').replace('true','"true"').replace('false','"false"'))
-            print('Запрос: ' + str(request) + '\n' + 'Ответ: ' + str(response))
-            return response
+                # Получаем сообщения и складываем пока не получится объект типпа dict
+                chunk = self.sok_requests.recv(8192)
+                if not chunk:  # chunk == ''
+                    break
+                response += chunk
+                try:
+                    response_out = response.decode('ANSI')
+                    response_out = le(response_out.replace('true', '"true"').replace('false', '"false"'))
+                    if type(response_out) is dict: break
+                except:
+                    continue
+            except socket.error:
+                self.sok_requests.close()
+                break
+        print('Запрос: ' + str(request) + '\n' + 'Ответ: ' + str(response))
+        response = response_out
+        return response
 
 
 if __name__ == '__main__':
     q = Quik()
     q.connekt()
     q.tool('SBER')
-    q.getLastCandles(10,40)
+    q.getLastCandles(10,0)
 
 
 
