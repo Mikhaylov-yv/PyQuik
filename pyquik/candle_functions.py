@@ -17,6 +17,7 @@ class CandleFunctions:
         self.getRequest(cmd='is_subscribed', data=f'{self.classCode}|{self.securityCode}|{interval}')
         # Запрос: {"data": "CETS|USD000UTSTOM|60|0", "id": 35, "cmd": "get_candles_from_data_source", "t": 1588619654890}
         candles = self.getRequest(cmd='get_candles_from_data_source', data=f'{self.classCode}|{self.securityCode}|{interval}|{count}')
+        # Создание Pandas
         df = pd.DataFrame()
         for candl in candles['data']:
             datetime = candl['datetime']
