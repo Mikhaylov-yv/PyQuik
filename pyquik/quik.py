@@ -60,6 +60,28 @@ class Quik(OrderBook, CandleFunctions):
         self.clientCode = self.getRequest(cmd = 'getClientCode')
         return secClass
 
+    def getSubs(self, cmd, data = '', t = 0):
+        self.id = self.id + 1
+        request = {"data": data, "id": self.id, "cmd": cmd, "t": t}
+        print('Запрос: ' + str(request) + '\n')
+        raw_data = json.dumps(request)
+
+        packet = b""
+        response = b''
+        response_early = b'1'
+        while True:
+            self.sok_requests.sendall((raw_data + self.CRLF).encode())
+            # Получаем сообщения и складываем пока не получится объект типпа dict
+            response = self.sok_requests.recv(1024)
+            # response += packet
+            response_out = response.decode('ANSI')
+            response_out = le(response_out.replace('true', '"true"').replace('false', '"false"'))
+            if type(response_early) is dict:
+                if response_out['data'] == response_early['data']: continue
+            response_early = response_out
+            print(response_out['data'])
+
+
     # Метод для выполнения запроса к LUA скрипту
     def getRequest(self, cmd, data = '', t = 0):
         self.id = self.id + 1
@@ -92,8 +114,11 @@ class Quik(OrderBook, CandleFunctions):
 if __name__ == '__main__':
     q = Quik()
     q.connekt()
-    q.tool('SBER')
-    q.getLastCandles(10,0)
+    q.tool('USD000UTSTOM')
+    # q.get_orderBook()
+    # print(q.IsSubscribed(1))
+    q.getSubLastCandles(1)
+    # q.getLastCandles(1,2)
 
 
 
