@@ -55,8 +55,10 @@ class Quik(OrderBook, CandleFunctions, Portfel, Orders):
         self.tradeAccount = self.getRequest(cmd = 'getTradeAccount', data = self.classCode)['data']
         self.toll_info = self.getRequest(cmd = 'getClassInfo', data = self.classCode)['data']
         self.firmid = self.toll_info['firmid']
-        # Запрос: {"data": "QJSIM", "id": 6, "cmd": "getTradeAccount", "t": 1589204281487}
         self.account = self.getRequest(cmd = 'getTradeAccount', data = self.classCode)['data']
+        # Запрос: {"data":"QJSIM|SBER|SEC_PRICE_STEP","id":8,"cmd":"getParamEx","t":1589206484267}
+        self.price_step = float(self.getRequest(cmd = 'getParamEx',
+                                          data = f'{self.classCode}|{self.securityCode}|SEC_PRICE_STEP')['data']['param_image'].replace(',','.'))
 
     # Определение secClass для создания инструмента
     def getSecurityClass(self, secCode):
@@ -131,7 +133,7 @@ if __name__ == '__main__':
     q = Quik()
     q.connekt()
     q.tool('SBER')
-    q.sendOrder('195', operation ='B', type = 'L', quantity = '2')
+    q.sendOrder(195.36, operation ='B', type = 'L', quantity = 2)
     # q.getDepoLimits()
     # q.get_orderBook()
     # print(q.IsSubscribed(1))
