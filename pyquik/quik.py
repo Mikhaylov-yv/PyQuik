@@ -6,8 +6,9 @@ from ast import literal_eval as le
 
 from orderbook import OrderBook
 from candle_functions import CandleFunctions
+from portfel import Portfel
 
-class Quik(OrderBook, CandleFunctions):
+class Quik(OrderBook, CandleFunctions, Portfel):
     port_requests = 34130
     port_callbacks = 34131
     host = "127.0.0.1"
@@ -111,13 +112,17 @@ class Quik(OrderBook, CandleFunctions):
         return response
 
 
+
+
+
 if __name__ == '__main__':
     q = Quik()
     q.connekt()
-    q.tool('USD000UTSTOM')
+    q.tool('SBER')
+    q.getDepoLimits()
     # q.get_orderBook()
     # print(q.IsSubscribed(1))
-    q.getSubLastCandles(1)
+    # q.getSubLastCandles(1)
     # q.getLastCandles(1,2)
 
 
