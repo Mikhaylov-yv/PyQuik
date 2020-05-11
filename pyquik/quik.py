@@ -80,7 +80,7 @@ class Quik(OrderBook, CandleFunctions, Portfel):
             if type(response_early) is dict:
                 if response_out['data'] == response_early['data']: continue
             response_early = response_out
-            print(response_out['data'])
+            self._printResponse(self, request, response_out)
 
 
     # Метод для выполнения запроса к LUA скрипту
@@ -107,9 +107,17 @@ class Quik(OrderBook, CandleFunctions, Portfel):
             except socket.error:
                 self.sok_requests.close()
                 break
-        print('Запрос: ' + str(request) + '\n' + 'Ответ: ' + str(response))
+        self._printResponse(request, response_out)
+
         response = response_out
         return response
+
+    def _printResponse(self, request, response_out):
+        if type(response_out) is dict:
+            if 'lua_error' in list(response_out):
+                print('Запрос: ' + str(request) + '\n' + 'Ошибка: ' + str(response_out['lua_error']))
+            else:
+                print('Запрос: ' + str(request) + '\n' + 'Ответ: ' + str(response_out))
 
 
 
