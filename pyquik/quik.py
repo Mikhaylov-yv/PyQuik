@@ -7,8 +7,9 @@ from ast import literal_eval as le
 from orderbook import OrderBook
 from candle_functions import CandleFunctions
 from portfel import Portfel
+from orders import Orders
 
-class Quik(OrderBook, CandleFunctions, Portfel):
+class Quik(OrderBook, CandleFunctions, Portfel, Orders):
     port_requests = 34130
     port_callbacks = 34131
     host = "127.0.0.1"
@@ -24,6 +25,7 @@ class Quik(OrderBook, CandleFunctions, Portfel):
         self.classCode = '' # 'CETS'
         self.securityCode = ''  # 'USD000UTSTOM'
         self.firmid = '' # 'MB0002500000'
+        self.account = '' # "NL0011100043"
         self.id = 0
 
 
@@ -53,6 +55,8 @@ class Quik(OrderBook, CandleFunctions, Portfel):
         self.tradeAccount = self.getRequest(cmd = 'getTradeAccount', data = self.classCode)['data']
         self.toll_info = self.getRequest(cmd = 'getClassInfo', data = self.classCode)['data']
         self.firmid = self.toll_info['firmid']
+        # Запрос: {"data": "QJSIM", "id": 6, "cmd": "getTradeAccount", "t": 1589204281487}
+        self.account = self.getRequest(cmd = 'getTradeAccount', data = self.classCode)['data']
 
     # Определение secClass для создания инструмента
     def getSecurityClass(self, secCode):
@@ -127,7 +131,8 @@ if __name__ == '__main__':
     q = Quik()
     q.connekt()
     q.tool('SBER')
-    q.getDepoLimits()
+    q.sendOrder('195', operation ='B', type = 'L', quantity = '2')
+    # q.getDepoLimits()
     # q.get_orderBook()
     # print(q.IsSubscribed(1))
     # q.getSubLastCandles(1)
